@@ -6,7 +6,7 @@ const CHART_WIDTH = 500;
 const CHART_HEIGHT = 300;
 const PNG_SCALE = 2;
 
-interface BarDatum {
+export interface BarDatum {
   category: string;
   value: number;
 }
@@ -19,7 +19,11 @@ function generateRandomData(): BarDatum[] {
   }));
 }
 
-function renderBarChartSvg(data: BarDatum[]): SVGSVGElement {
+function renderBarChartSvg(unsortedData: BarDatum[]): SVGSVGElement {
+  // Categories are always shown in alphabetical order on the x-axis,
+  // independent of how the caller computed/ordered the values.
+  const data = [...unsortedData].sort((a, b) => a.category.localeCompare(b.category, "de"));
+
   // d3 needs the node attached to the document to measure text for axis ticks,
   // so render into an off-screen host and clone the result before removing it.
   const host = document.createElement("div");
@@ -106,13 +110,19 @@ async function svgToPngBase64(svgEl: SVGSVGElement): Promise<string> {
   return canvas.toDataURL("image/png").split(",")[1];
 }
 
+let insertCounter = 0;
+
+/** Shared offset counter so charts inserted from different UI entry points don't stack. */
+export function nextInsertIndex(): number {
+  return insertCounter++;
+}
+
 /**
- * Renders a D3 bar chart with random data and inserts it as a picture on the
- * currently selected slide. `clickIndex` offsets each inserted picture so
- * repeated clicks don't stack exactly on top of one another.
+ * Renders a D3 bar chart for the given data and inserts it as a picture on
+ * the currently selected slide. `clickIndex` offsets each inserted picture
+ * so repeated inserts don't stack exactly on top of one another.
  */
-export async function insertRandomBarChart(clickIndex: number): Promise<void> {
-  const data = generateRandomData();
+export async function insertBarChart(data: BarDatum[], clickIndex: number): Promise<void> {
   const svgEl = renderBarChartSvg(data);
   const base64Png = await svgToPngBase64(svgEl);
 
@@ -128,4 +138,8 @@ export async function insertRandomBarChart(clickIndex: number): Promise<void> {
     picture.name = `D3BarChart_${Date.now()}`;
     await context.sync();
   });
+}
+
+export async function insertRandomBarChart(clickIndex: number): Promise<void> {
+  await insertBarChart(generateRandomData(), clickIndex);
 }

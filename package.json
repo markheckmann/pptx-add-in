@@ -1,10 +1,6 @@
 {
-  "name": "office-addin-taskpane-react",
+  "name": "survey-studio",
   "version": "0.0.1",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/OfficeDev/Office-Addin-TaskPane-React.git"
-  },
   "license": "MIT",
   "config": {
     "app_to_debug": "powerpoint",
@@ -33,7 +29,8 @@
     "es6-promise": "^4.2.8",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "regenerator-runtime": "^0.14.1"
+    "regenerator-runtime": "^0.14.1",
+    "xlsx": "^0.18.5"
   },
   "devDependencies": {
     "@babel/core": "^8.0.1",

@@ -1,7 +1,7 @@
 import * as React from "react";
-import { useRef, useState } from "react";
+import { useState } from "react";
 import { Button, Field, tokens, makeStyles } from "@fluentui/react-components";
-import { insertRandomBarChart } from "../chartToSlide";
+import { insertRandomBarChart, nextInsertIndex } from "../chartToSlide";
 
 const useStyles = makeStyles({
   container: {
@@ -22,13 +22,12 @@ const useStyles = makeStyles({
 
 const ChartInsertion: React.FC = () => {
   const styles = useStyles();
-  const clickCountRef = useRef(0);
   const [error, setError] = useState<string | null>(null);
 
   const handleAddChartClick = async () => {
     try {
       setError(null);
-      await insertRandomBarChart(clickCountRef.current++);
+      await insertRandomBarChart(nextInsertIndex());
     } catch (e) {
       setError(`Failed to insert chart: ${e instanceof Error ? e.message : String(e)}`);
     }

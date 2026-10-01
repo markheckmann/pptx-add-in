@@ -4,33 +4,32 @@ import { Image, tokens, makeStyles } from "@fluentui/react-components";
 export interface HeaderProps {
   title: string;
   logo: string;
-  message: string;
 }
 
 const useStyles = makeStyles({
-  welcome__header: {
+  header: {
     display: "flex",
     flexDirection: "column",
     alignItems: "center",
-    paddingBottom: "30px",
-    paddingTop: "100px",
+    gap: "8px",
+    paddingTop: "24px",
+    paddingBottom: "20px",
     backgroundColor: tokens.colorNeutralBackground3,
   },
-  message: {
-    fontSize: tokens.fontSizeHero900,
-    fontWeight: tokens.fontWeightRegular,
-    fontColor: tokens.colorNeutralBackgroundStatic,
+  title: {
+    fontSize: tokens.fontSizeBase500,
+    fontWeight: tokens.fontWeightSemibold,
   },
 });
 
 const Header: React.FC<HeaderProps> = (props: HeaderProps) => {
-  const { title, logo, message } = props;
+  const { title, logo } = props;
   const styles = useStyles();
 
   return (
-    <section className={styles.welcome__header}>
-      <Image width="90" height="90" src={logo} alt={title} />
-      <h1 className={styles.message}>{message}</h1>
+    <section className={styles.header}>
+      <Image width="48" height="48" src={logo} alt={title} />
+      <h1 className={styles.title}>{title}</h1>
     </section>
   );
 };
