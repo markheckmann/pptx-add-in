@@ -28,6 +28,46 @@ export function getColumnCount(grid: SheetGrid): number {
   return grid.reduce((max, row) => Math.max(max, row.length), 0);
 }
 
+/** Returns the distinct, non-empty values of a column, alphabetically. */
+export function getDistinctValues(
+  grid: SheetGrid,
+  columnIndex: number,
+  hasHeaderRow: boolean
+): string[] {
+  const dataRows = hasHeaderRow ? grid.slice(1) : grid;
+  const values = new Set<string>();
+  for (const row of dataRows) {
+    const value = (row[columnIndex] ?? "").trim();
+    if (value.length > 0) values.add(value);
+  }
+  return Array.from(values).sort((a, b) => a.localeCompare(b, "de"));
+}
+
+export interface FilterRule {
+  columnIndex: number;
+  /** Rows are kept only if their value in this column is one of these. */
+  selectedValues: string[];
+}
+
+/**
+ * Keeps only the rows matching every filter rule (AND). A rule with no
+ * selected values matches nothing for that column. An empty filter list
+ * returns the grid unchanged.
+ */
+export function applyFilters(
+  grid: SheetGrid,
+  filters: FilterRule[],
+  hasHeaderRow: boolean
+): SheetGrid {
+  if (filters.length === 0) return grid;
+  const headerRows = hasHeaderRow ? grid.slice(0, 1) : [];
+  const dataRows = hasHeaderRow ? grid.slice(1) : grid;
+  const filteredRows = dataRows.filter((row) =>
+    filters.every((f) => f.selectedValues.includes((row[f.columnIndex] ?? "").trim()))
+  );
+  return [...headerRows, ...filteredRows];
+}
+
 /**
  * Counts how often each distinct value occurs in the given column and
  * returns the counts as chart data. Empty cells are skipped. The chart

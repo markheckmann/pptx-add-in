@@ -24,6 +24,10 @@ module.exports = async (env, options) => {
         import: ["./src/taskpane/index.tsx", "./src/taskpane/taskpane.html"],
         dependOn: "react",
       },
+      dialog: {
+        import: ["./src/dialog/index.tsx", "./src/dialog/dialog.html"],
+        dependOn: "react",
+      },
       commands: "./src/commands/commands.ts",
     },
     output: {
@@ -89,6 +93,11 @@ module.exports = async (env, options) => {
         filename: "commands.html",
         template: "./src/commands/commands.html",
         chunks: ["polyfill", "commands"],
+      }),
+      new HtmlWebpackPlugin({
+        filename: "dialog.html",
+        template: "./src/dialog/dialog.html",
+        chunks: ["polyfill", "dialog", "react"],
       }),
       new webpack.ProvidePlugin({
         Promise: ["es6-promise", "Promise"],
